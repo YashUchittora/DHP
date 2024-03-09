@@ -15,7 +15,7 @@ nltk.download('averaged_perceptron_tagger')
 
 # Connect to PostgreSQL
 conn = psycopg2.connect(
-   dbname = os.environ ['postgres://newsnest_user:o96W44cRGuC1UuqSYax4OFIN4pOZTGEf@dpg-cnm9j8un7f5s73d63tqg-a/newsnest']
+   dbname=os.environ ['postgres://newsnest_user:o96W44cRGuC1UuqSYax4OFIN4pOZTGEf@dpg-cnm9j8un7f5s73d63tqg-a5432/newsnest'],
 )
 cur = conn.cursor()
 
