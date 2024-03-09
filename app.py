@@ -17,8 +17,7 @@ nltk.download('averaged_perceptron_tagger')
 conn = psycopg2.connect(
    dbname=os.environ ['postgres://newsnest_user:o96W44cRGuC1UuqSYax4OFIN4pOZTGEf@dpg-cnm9j8un7f5s73d63tqg-a5432/newsnest'],
 )
-      return conn
-#cur = conn.cursor()
+cur = conn.cursor()
 
 def create_table():
     # Create a table if it doesn't exist
