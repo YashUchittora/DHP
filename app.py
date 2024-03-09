@@ -14,9 +14,11 @@ nltk.download('punkt')
 nltk.download('averaged_perceptron_tagger')
 
 # Connect to PostgreSQL
+# Connect to PostgreSQL
 conn = psycopg2.connect(
-    dbname=os.environ['postgres://newsnest_user:o96W44cRGuC1UuqSYax4OFIN4pOZTGEf@dpg-cnm9j8un7f5s73d63tqg-a5432/newsnest'],
+  dbname=os.environ['postgres://newsnest_user:o96W44cRGuC1UuqSYax4OFIN4pOZTGEf@dpg-cn']
 )
+
 cur = conn.cursor()
 
 def create_table():
