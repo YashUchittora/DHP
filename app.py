@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from newspaper import Article
 import nltk
@@ -14,10 +15,7 @@ nltk.download('averaged_perceptron_tagger')
 
 # Connect to PostgreSQL
 conn = psycopg2.connect(
-    host="localhost",
-    database="newsnest",
-    user="postgres",
-    password="8859"
+   dbname = os. [ 
 )
 cur = conn.cursor()
 
