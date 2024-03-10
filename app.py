@@ -31,7 +31,7 @@ github = oauth.register(
 )
 
 # GitHub admin usernames for verification
-github_admin_usernames = ['YashUchittora','atmabodha']
+# github_admin_usernames = ['YashUchittora','atmabodha']
 # news
 def fetch_news_content(url):
     try:
@@ -107,30 +107,32 @@ def home():
 
 @app.route('/result', methods=['GET', 'POST'])
 def result():
-    if request.method == 'POST':
-        url = request.form.get('url')
-        if url:
-            title, content, images = fetch_news_content(url)
-
-            # Check if the fetch was successful
-            if title is None or content is None or images is None:
-                flash("Error fetching content. Please check the URL and try again.", 'error')
-            else:
-                num_sentences, num_words, pos_counts = analyze_text(content)
-                pos_counts_json = json.dumps(pos_counts)
-
-                create_table()
-                cur.execute("""
-                    INSERT INTO news_analysis(url, title, content, num_sentences, num_words, pos_counts)
-                    VALUES (%s, %s, %s, %s, %s, %s)
-                """, (url, title, content, num_sentences, num_words, pos_counts_json))
-                conn.commit()
-                conn.close()
-
-                # Render the result template with the analysis details
-                return render_template('result.html', title=title, content=content,
-                                       num_sentences=num_sentences, num_words=num_words, pos_counts=pos_counts)
-
+    try:
+        if request.method == 'POST':
+            url = request.form.get('url')
+            if url:
+                title, content, images = fetch_news_content(url)
+    
+                # Check if the fetch was successful
+                if title is None or content is None or images is None:
+                    flash("Error fetching content. Please check the URL and try again.", 'error')
+                else:
+                    num_sentences, num_words, pos_counts = analyze_text(content)
+                    pos_counts_json = json.dumps(pos_counts)
+    
+                    create_table()
+                    cur.execute("""
+                        INSERT INTO news_analysis(url, title, content, num_sentences, num_words, pos_counts)
+                        VALUES(%s, %s, %s, %s, %s, %s)
+                    """, (url, title, content, num_sentences, num_words, pos_counts_json))
+                    conn.commit()
+                    conn.close()
+    
+                    # Render the result template with the analysis details
+                    return render_template('result.html', title=title, content=content,num_sentences=num_sentences, num_words=num_words, pos_counts=pos_counts)
+    except:
+        return render_template('result.html')
+        
     # flash("Invalid request.", 'error')
     # return redirect(url_for('admin_dashboard'))
 
@@ -153,43 +155,41 @@ def analyze_text(text):
     
     return num_sentences, num_words, pos_counts
 
-@app.route('/login/github')
-def github_login():
-    github = oauth.create_client('github')
-    redirect_uri = url_for('github_authorize', _external=True)
-    return github.authorize_redirect(redirect_uri)
+# @app.route('/login/github')
+# def github_login():
+#     github = oauth.create_client('github')
+#     redirect_uri = url_for('github_authorize', _external=True)
+#     return github.authorize_redirect(redirect_uri)
 
-# Github authorize route
-@app.route('/login/github/authorize')
-def github_authorize():
-    try:
-        github = oauth.create_client('github')
-        token = github.authorize_access_token()
-        session['github_token'] = token
-        resp = github.get('user').json()
-        print(f"\n{resp}\n")
-        logged_in_username = resp.get('login')
-        if logged_in_username in github_admin_usernames:
-            cur = conn.cursor()
-            cur.execute("SELECT * FROM news_analysis")
-            past_analyses = cur.fetchall()
-            return render_template('admin_dashboard.html', past_analyses=past_analyses)
-        else:
-            return redirect(url_for('home'))
-    except:
-        return redirect(url_for('home'))
+# # Github authorize route
+# @app.route('/login/github/authorize')
+# def github_authorize():
+#     try:
+#         github = oauth.create_client('github')
+#         token = github.authorize_access_token()
+#         session['github_token'] = token
+#         resp = github.get('user').json()
+#         print(f"\n{resp}\n")
+#         logged_in_username = resp.get('login')
+#         if logged_in_username in github_admin_usernames:
+#             cur = conn.cursor()
+#             cur.execute("SELECT * FROM news_analysis")
+#             past_analyses = cur.fetchall()
+#             return render_template('admin_dashboard.html', past_analyses=past_analyses)
+#         else:
+#             return redirect(url_for('home'))
+#     except:
+#         return redirect(url_for('home'))
 
     
-# Logout route for GitHub
-@app.route('/logout/github')
-def github_logout():
-    session.clear()
-    # session.pop('github_token', None)()
-    print("logout")
-    # return redirect(url_for('index'))
-    return redirect(url_for('home'))
-
+# # Logout route for GitHub
+# @app.route('/logout/github')
+# def github_logout():
+#     session.clear()
+#     # session.pop('github_token', None)()
+#     print("logout")
+#     # return redirect(url_for('index'))
+#     return redirect(url_for('home'))
 
 if __name__ == '__main__':
     app.run(debug=True)
-
