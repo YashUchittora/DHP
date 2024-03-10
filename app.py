@@ -16,14 +16,6 @@ oauth = OAuth(app)
 app.config['SECRET_KEY'] = "Yashu"
 app.config['GITHUB_CLIENT_ID'] = "24a604d52340cfca4f4b"
 app.config['GITHUB_CLIENT_SECRET'] = "85d616c66308bcdb89c830dcb7d4bc99ddeb3c2f"
-#google
-# Path to the client secrets file   
-scopes = ['https://www.googleapis.com/auth/userinfo.profile',
-          'https://www.googleapis.com/auth/userinfo.email',
-          'openid']
-redirect_uri = 'https://newsnest-uckn.onrender.com/authorize'
-# Create the OAuth flow object
-flow = Flow.from_client_secrets_file(client_secrets_file, scopes=scopes, redirect_uri=redirect_uri)
 
 github = oauth.register(
     name='github',
