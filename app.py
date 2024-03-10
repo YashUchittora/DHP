@@ -5,56 +5,19 @@ from nltk import sent_tokenize, word_tokenize, pos_tag
 from collections import Counter
 import json
 import psycopg2
-from authlib.integrations.flask_client import OAuth
-nltk.download('all')
+
 app = Flask(__name__)
+app.secret_key = 'your_secret_key'
 
-# nltk.download('punkt')
-# nltk.download('averaged_perceptron_tagger')
-
-# github
-app.config['SECRET_KEY'] = "THIS SHOULD BE SECRET"
-app.config['GITHUB_CLIENT_ID'] = "24a604d52340cfca4f4b"
-app.config['GITHUB_CLIENT_SECRET'] = "85d616c66308bcdb89c830dcb7d4bc99ddeb3c2f"
-oauth= OAuth(app)
-
-github = oauth.register(
-    name='github',
-    client_id=app.config["GITHUB_CLIENT_ID"],
-    client_secret=app.config["GITHUB_CLIENT_SECRET"],
-    access_token_url='https://github.com/login/oauth/access_token',
-    access_token_params=None,
-    authorize_url='https://github.com/login/oauth/authorize',
-    authorize_params=None,
-    api_base_url='https://api.github.com/',
-    client_kwargs={'scope': 'user:email'},
-)
-
-# GitHub admin usernames for verification
-# github_admin_usernames = ['YashUchittora','atmabodha']
-# news
-def fetch_news_content(url):
-    try:
-        # Fetch HTML content using newspaper library
-        article = Article(url)
-        article.download()
-        article.parse()
-
-        title = article.title if article.title else 'Title not found'
-        text = article.text if article.text else 'Content not found'
-        images = article.images if article.images else []
-
-        return title, text, images
-    except Exception as e:
-        print(f"Error fetching content: {e}")
-        return None, None, None
+nltk.download('punkt')
+nltk.download('averaged_perceptron_tagger')
 
 # Connect to PostgreSQL
 conn = psycopg2.connect(
-    host="dpg-cnmnd8gcmk4c73aikuc0-a",
-    database="newsdb_egtu",
-    user="yash",
-    password="chdGWMaJ1yfG7mUHzyN58YzOaHNFhLXg"
+    host="localhost",
+    database="newsnest",
+    user="postgres",
+    password="8859"
 )
 cur = conn.cursor()
 
@@ -107,36 +70,48 @@ def home():
 
 @app.route('/result', methods=['GET', 'POST'])
 def result():
-    try:
-        if request.method == 'POST':
-            url = request.form.get('url')
-            if url:
-                title, content, images = fetch_news_content(url)
-    
-                # Check if the fetch was successful
-                if title is None or content is None or images is None:
-                    flash("Error fetching content. Please check the URL and try again.", 'error')
-                else:
-                    num_sentences, num_words, pos_counts = analyze_text(content)
-                    pos_counts_json = json.dumps(pos_counts)
-    
-                    create_table()
-                    cur.execute("""
-                        INSERT INTO news_analysis(url, title, content, num_sentences, num_words, pos_counts)
-                        VALUES(%s, %s, %s, %s, %s, %s)
-                    """, (url, title, content, num_sentences, num_words, pos_counts_json))
-                    conn.commit()
-                    conn.close()
-    
-                    # Render the result template with the analysis details
-                    return render_template('result.html', title=title, content=content,num_sentences=num_sentences, num_words=num_words, pos_counts=pos_counts)
-    except:
-        return render_template('result.html')
-        
+    if request.method == 'POST':
+        url = request.form.get('url')
+        if url:
+            title, content, images = fetch_news_content(url)
+
+            # Check if the fetch was successful
+            if title is None or content is None or images is None:
+                flash("Error fetching content. Please check the URL and try again.", 'error')
+            else:
+                num_sentences, num_words, pos_counts = analyze_text(content)
+                pos_counts_json = json.dumps(pos_counts)
+
+                create_table()
+                cur.execute("""
+                    INSERT INTO news_analysis (url, title, content, num_sentences, num_words, pos_counts)
+                    VALUES (%s, %s, %s, %s, %s, %s)
+                """, (url, title, content, num_sentences, num_words, pos_counts_json))
+
+                conn.commit()
+
+                # Render the result template with the analysis details
+                return render_template('result.html', title=title, content=content,
+                                       num_sentences=num_sentences, num_words=num_words, pos_counts=pos_counts)
+
     # flash("Invalid request.", 'error')
     # return redirect(url_for('admin_dashboard'))
 
+def fetch_news_content(url):
+    try:
+        # Fetch HTML content using newspaper library
+        article = Article(url)
+        article.download()
+        article.parse()
 
+        title = article.title if article.title else 'Title not found'
+        text = article.text if article.text else 'Content not found'
+        images = article.images if article.images else []
+
+        return title, text, images
+    except Exception as e:
+        print(f"Error fetching content: {e}")
+        return None, None, None
 
 def analyze_text(text):
     # Tokenize text into sentences
@@ -155,41 +130,8 @@ def analyze_text(text):
     
     return num_sentences, num_words, pos_counts
 
-# @app.route('/login/github')
-# def github_login():
-#     github = oauth.create_client('github')
-#     redirect_uri = url_for('github_authorize', _external=True)
-#     return github.authorize_redirect(redirect_uri)
-
-# # Github authorize route
-# @app.route('/login/github/authorize')
-# def github_authorize():
-#     try:
-#         github = oauth.create_client('github')
-#         token = github.authorize_access_token()
-#         session['github_token'] = token
-#         resp = github.get('user').json()
-#         print(f"\n{resp}\n")
-#         logged_in_username = resp.get('login')
-#         if logged_in_username in github_admin_usernames:
-#             cur = conn.cursor()
-#             cur.execute("SELECT * FROM news_analysis")
-#             past_analyses = cur.fetchall()
-#             return render_template('admin_dashboard.html', past_analyses=past_analyses)
-#         else:
-#             return redirect(url_for('home'))
-#     except:
-#         return redirect(url_for('home'))
-
-    
-# # Logout route for GitHub
-# @app.route('/logout/github')
-# def github_logout():
-#     session.clear()
-#     # session.pop('github_token', None)()
-#     print("logout")
-#     # return redirect(url_for('index'))
-#     return redirect(url_for('home'))
 
 if __name__ == '__main__':
     app.run(debug=True)
+    cur.close()
+    conn.close()
