@@ -171,10 +171,10 @@ def github_authorize():
         if logged_in_username in github_admin_usernames:
             cur = conn.cursor()
             cur.execute("SELECT * FROM news_analysis")
-            data = cur.fetchall()
+            past_analyses = cur.fetchall()
             conn.commit()  # Commit changes before closing the connection
             conn.close()
-            return render_template("admin_dashboard.html", past_analyses=data)
+            return render_template("admin_dashboard.html", past_analyses=past_analyses)
         else:
             return redirect(url_for('home'))
     except:
