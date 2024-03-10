@@ -11,8 +11,31 @@ from authlib.integrations.flask_client import OAuth
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
-nltk.download('punkt')
-nltk.download('averaged_perceptron_tagger')
+
+oauth = OAuth(app)
+app.config['SECRET_KEY'] = "Yashu"
+app.config['GITHUB_CLIENT_ID'] = "24a604d52340cfca4f4b"
+app.config['GITHUB_CLIENT_SECRET'] = "85d616c66308bcdb89c830dcb7d4bc99ddeb3c2f"
+#google
+# Path to the client secrets file   
+scopes = ['https://www.googleapis.com/auth/userinfo.profile',
+          'https://www.googleapis.com/auth/userinfo.email',
+          'openid']
+redirect_uri = 'https://newsnest-uckn.onrender.com/authorize'
+# Create the OAuth flow object
+flow = Flow.from_client_secrets_file(client_secrets_file, scopes=scopes, redirect_uri=redirect_uri)
+
+github = oauth.register(
+    name='github',
+    client_id=app.config["GITHUB_CLIENT_ID"],
+    client_secret=app.config["GITHUB_CLIENT_SECRET"],
+    access_token_url='https://github.com/login/oauth/access_token',
+    access_token_params=None,
+    authorize_url='https://github.com/login/oauth/authorize',
+    authorize_params=None,
+    api_base_url='https://api.github.com/',
+    client_kwargs={'scope': 'user:email'},
+)
 
 # Connect to PostgreSQL
 conn = psycopg2.connect(
@@ -133,7 +156,7 @@ def analyze_text(text):
     return num_sentences, num_words, pos_counts
 
 
-usernames = ["atmabodha",""]
+usernames = ["atmabodha","YashUchittora"]
 @app.route('/login/github')
 def github_login():
     github = oauth.create_client('github')
