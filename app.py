@@ -1,4 +1,3 @@
-import os
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from newspaper import Article
 import nltk
@@ -14,28 +13,28 @@ nltk.download('punkt')
 nltk.download('averaged_perceptron_tagger')
 
 # Connect to PostgreSQL
-# Connect to PostgreSQL
 conn = psycopg2.connect(
-  dbname=os.environ['postgres://newsnest_user:o96W44cRGuC1UuqSYax4OFIN4pOZTGEf@dpg-cn']
+    host="localhost",
+    database="newsnest",
+    user="postgres",
+    password="8859"
 )
-
 cur = conn.cursor()
 
 def create_table():
     # Create a table if it doesn't exist
-    with conn:
-        with conn.cursor() as cur:
-            cur.execute("""
-                CREATE TABLE IF NOT EXISTS news_analysis (
-                    id SERIAL PRIMARY KEY,
-                    url VARCHAR(255),
-                    title VARCHAR(255),
-                    content TEXT,
-                    num_sentences INTEGER,
-                    num_words INTEGER,
-                    pos_counts JSON
-                )
-            """)
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS news_analysis (
+            id SERIAL PRIMARY KEY,
+            url VARCHAR(255),
+            title VARCHAR(255),
+            content TEXT,
+            num_sentences INTEGER,
+            num_words INTEGER,
+            pos_counts JSON
+        )
+    """)
+    conn.commit()
 
 # Login route
 @app.route('/login', methods=['GET', 'POST'])
@@ -130,6 +129,7 @@ def analyze_text(text):
     pos_counts = Counter(tag for word, tag in pos_tags)
     
     return num_sentences, num_words, pos_counts
+
 
 if __name__ == '__main__':
     app.run(debug=True)
