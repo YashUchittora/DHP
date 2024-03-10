@@ -175,8 +175,7 @@ def github_authorize():
             data = cur.fetchall()
             conn.commit()  # Commit changes before closing the connection
             conn.close()
-
-            return render_template("admin_dashboard.html", data=data)
+            return render_template("admin_dashboard.html", past_analyses=data)
         else:
             return redirect(url_for('index'))
     except:
