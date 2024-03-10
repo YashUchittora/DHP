@@ -169,6 +169,7 @@ def github_authorize():
             cur = conn.cursor()
             cur.execute("SELECT * FROM news_analysis")
             data = cur.fetchall()
+            conn.commit()
             conn.close()
             return render_template("admin_dashboard.html", data=data)
         else:
