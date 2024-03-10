@@ -6,11 +6,11 @@ from collections import Counter
 import json
 import psycopg2
 from authlib.integrations.flask_client import OAuth
-
+nltk.download('all')
 app = Flask(__name__)
 
-nltk.download('punkt')
-nltk.download('averaged_perceptron_tagger')
+# nltk.download('punkt')
+# nltk.download('averaged_perceptron_tagger')
 
 # github
 app.config['SECRET_KEY'] = "THIS SHOULD BE SECRET"
@@ -32,6 +32,22 @@ github = oauth.register(
 
 # GitHub admin usernames for verification
 github_admin_usernames = ['YashUchittora','atmabodha']
+# news
+def fetch_news_content(url):
+    try:
+        # Fetch HTML content using newspaper library
+        article = Article(url)
+        article.download()
+        article.parse()
+
+        title = article.title if article.title else 'Title not found'
+        text = article.text if article.text else 'Content not found'
+        images = article.images if article.images else []
+
+        return title, text, images
+    except Exception as e:
+        print(f"Error fetching content: {e}")
+        return None, None, None
 
 # Connect to PostgreSQL
 conn = psycopg2.connect(
@@ -105,10 +121,9 @@ def result():
 
                 create_table()
                 cur.execute("""
-                    INSERT INTO news_analysis (url, title, content, num_sentences, num_words, pos_counts)
+                    INSERT INTO news_analysis(url, title, content, num_sentences, num_words, pos_counts)
                     VALUES (%s, %s, %s, %s, %s, %s)
                 """, (url, title, content, num_sentences, num_words, pos_counts_json))
-
                 conn.commit()
                 conn.close()
 
@@ -119,21 +134,7 @@ def result():
     # flash("Invalid request.", 'error')
     # return redirect(url_for('admin_dashboard'))
 
-def fetch_news_content(url):
-    try:
-        # Fetch HTML content using newspaper library
-        article = Article(url)
-        article.download()
-        article.parse()
 
-        title = article.title if article.title else 'Title not found'
-        text = article.text if article.text else 'Content not found'
-        images = article.images if article.images else []
-
-        return title, text, images
-    except Exception as e:
-        print(f"Error fetching content: {e}")
-        return None, None, None
 
 def analyze_text(text):
     # Tokenize text into sentences
@@ -172,9 +173,7 @@ def github_authorize():
             cur = conn.cursor()
             cur.execute("SELECT * FROM news_analysis")
             past_analyses = cur.fetchall()
-            conn.commit()  # Commit changes before closing the connection
-            conn.close()
-            return render_template("admin_dashboard.html", past_analyses=past_analyses)
+            return render_template('admin_dashboard.html', past_analyses=past_analyses)
         else:
             return redirect(url_for('home'))
     except:
