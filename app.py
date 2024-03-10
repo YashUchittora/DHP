@@ -5,7 +5,7 @@ from nltk import sent_tokenize, word_tokenize, pos_tag
 from collections import Counter
 import json
 import psycopg2
-
+nltk.dawonlod('all')
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
