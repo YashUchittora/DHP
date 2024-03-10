@@ -14,10 +14,10 @@ nltk.download('averaged_perceptron_tagger')
 
 # Connect to PostgreSQL
 conn = psycopg2.connect(
-    host="localhost",
+    host="dpg-cnm9j8un7f5s73d63tqg-a",
     database="newsnest",
-    user="postgres",
-    password="8859"
+    user="newsnest_user",
+    password="o96W44cRGuC1UuqSYax4OFIN4pOZTGEf"
 )
 cur = conn.cursor()
 
