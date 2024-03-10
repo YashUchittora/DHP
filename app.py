@@ -106,6 +106,7 @@ def result():
                 """, (url, title, content, num_sentences, num_words, pos_counts_json))
 
                 conn.commit()
+                conn.close()
 
                 # Render the result template with the analysis details
                 return render_template('result.html', title=title, content=content,
@@ -184,5 +185,4 @@ def github_logout():
 
 if __name__ == '__main__':
     app.run(debug=True)
-    cur.close()
-    conn.close()
+
