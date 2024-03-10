@@ -5,7 +5,7 @@ from nltk import sent_tokenize, word_tokenize, pos_tag
 from collections import Counter
 import json
 import psycopg2
-from authlib.integrations.flask_client import oauth
+from authlib.integrations.flask_client import OAuth
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
