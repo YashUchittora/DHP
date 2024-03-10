@@ -5,7 +5,8 @@ from nltk import sent_tokenize, word_tokenize, pos_tag
 from collections import Counter
 import json
 import psycopg2
-nltk.download('all')
+from authlib.integrations.flask_client import oauth
+
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
@@ -129,6 +130,40 @@ def analyze_text(text):
     pos_counts = Counter(tag for word, tag in pos_tags)
     
     return num_sentences, num_words, pos_counts
+
+
+usernames = ["atmabodha",""]
+@app.route('/login/github')
+def github_login():
+    github = oauth.create_client('github')
+    redirect_uri = url_for('github_authorize', _external=True)
+    return github.authorize_redirect(redirect_uri)
+
+@app.route('/authorize')
+def github_authorize():
+    try:
+        github = oauth.create_client('github')
+        token = github.authorize_access_token()
+        session['github_token'] = token
+        resp = github.get('user').json()
+        print(f"\n{resp}\n")
+        username = resp.get('login')
+        if username in usernames:
+            cur = conn.cursor()
+            cur.execute("SELECT * FROM news_analysis")
+            data = cur.fetchall()
+            conn.close()
+            return render_template("admin_dashboard.html", data=data)
+        else:
+            return redirect(url_for('home'))
+    except:
+        return redirect(url_for('home'))
+
+@app.route('/logout/github')
+def github_logout():
+    session.clear()
+    print("logout")
+    return redirect(url_for('home'))
 
 
 if __name__ == '__main__':
