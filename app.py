@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from newspaper import Article
 import nltk
 from nltk import sent_tokenize, word_tokenize, pos_tag
+nltk.download('all')
 from collections import Counter
 import json
 import psycopg2
