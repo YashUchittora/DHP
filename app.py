@@ -13,10 +13,10 @@ nltk.download('all')
 
 # Connect to PostgreSQL
 conn = psycopg2.connect(
-    host="localhost",
-    database="newsnest",
-    user="postgres",
-    password="8859"
+    host="dpg-cnmnd8gcmk4c73aikuc0-a",
+    database="newsdb_egtu",
+    user="yash",
+    password="chdGWMaJ1yfG7mUHzyN58YzOaHNFhLXg"
 )
 cur = conn.cursor()
 
