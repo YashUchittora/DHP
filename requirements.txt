@@ -8,4 +8,6 @@ textblob
 authlib
 Flask-SQLAlchemy  # Optional, for database interaction (consider using)
 Flask-WTF
-oauthlib
+oauthlib==3.1.1
+
+gunicorn
