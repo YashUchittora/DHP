@@ -6,7 +6,6 @@ beautifulsoup4  # bs4 is usually an alias for beautifulsoup4
 requests
 textblob
 authlib
-Flask-SQLAlchemy  # Optional, for database interaction (consider using)
 Flask-WTF
 authlib Flask
 
