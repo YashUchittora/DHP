@@ -17,6 +17,7 @@ nltk.download('averaged_perceptron_tagger')
 app.config['SECRET_KEY'] = "THIS SHOULD BE SECRET"
 app.config['GITHUB_CLIENT_ID'] = "24a604d52340cfca4f4b"
 app.config['GITHUB_CLIENT_SECRET'] = "85d616c66308bcdb89c830dcb7d4bc99ddeb3c2f"
+oauth= OAuth(app)
 
 github = oauth.register(
     name='github',
