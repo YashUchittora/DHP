@@ -7,7 +7,6 @@ textblob
 Jinja2
 Werkzeug
 oauthlib
-MarkupSaf
 click
 itsdangerous
 six
