@@ -5,106 +5,127 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f0f0f0;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            background-image: url(static/bg.jpeg);
-        }
+            body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-image: url('static/jpeg');
+    }
 
-        header, footer {
-            background-color: rgba(48, 92, 139, 0.9);
-            width: 100%;
-            padding: 16px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            position: fixed;
-            left: 0;
-            text-align: center;
-            z-index: 2;
-            display: flex;
-            justify-content: space-between;
-            width: 100vw;
-        }
+    header,
+    footer {
+        background-color: #34515e;
+        width: 100%;
+        padding: 16px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        position: fixed;
+        left: 0;
+        text-align: center;
+        z-index: 2;
+        display: flex;
+        justify-content: space-between;
+        width: 100vw;
+    }
 
-        header {
-            top: 0;
-        }
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 80%;
+        margin: 0 auto;
+    }
 
-        footer {
-            bottom: 0;
-            size: 10px;
-        }
+    header {
+        top: 0;
+        width: 100%;
+    }
 
-        h1 {
-            color: #000; /* Set heading color to black */
-            margin-bottom: 20px;
-        }
+    footer {
+        bottom: 0;
+        width: 100%;
+    }
 
-        main {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 70px; /* Adjust margin to avoid overlapping with header */
-        }
+    footer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #fff;
+    }
 
-        table {
-            border-collapse: collapse;
-            width: 80%;
-            margin-top: 20px;
-            background-color: rgba(255, 255, 255, 0.9);
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            overflow: hidden;
-        }
+    h1 {
+        color: #000;
+        margin-bottom: 20px;
+    }
 
-        th, td {
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 12px;
-        }
+    main {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 70px;
+        margin-bottom: 70px; /* Add margin to avoid overlapping with the footer */
+    }
 
-        th {
-            background-color: #1E6B9E;
-            color: #fff;
-        }
+    table {
+        border-collapse: collapse;
+        width: 80%;
+        margin-top: 20px;
+        background-color: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        overflow: hidden;
+    }
 
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
+    th,
+    td {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 12px;
+    }
 
-        tr:hover {
-            background-color: #e0e0e0;
-        }
+    th {
+        background-color: #1E6B9E;
+        color: #fff;
+    }
 
-        a {
-            color: #1E6B9E;
-            text-decoration: none;
-            font-size: 16px;
-        }
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
 
-        a:hover {
-            text-decoration: underline;
-        }
+    tr:hover {
+        background-color: #e0e0e0;
+    }
 
-        .logout-btn {
-            color: #fff;
-            background-color: #1E6B9E;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-right: 40px;
-        }
+    a {
+        color: #1E6B9E;
+        text-decoration: none;
+        font-size: 16px;
+    }
 
-        .logout-btn:hover {
-            background-color: #125478;
-        }
+    a:hover {
+        text-decoration: underline;
+    }
+
+    .logout-btn {
+        color: #fff;
+        background-color: #1E6B9E;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-right: 20px; /* Move the logout button to the right */
+    }
+
+    .logout-btn:hover {
+        background-color: #125478;
+    }
+
     </style>
+    
 </head>
 <body>
     <header>
@@ -140,7 +161,7 @@
     </main>
 
     <footer>
-        <a href="{{ url_for('logout') }}">Logout</a>
+        <p>&copy; 2024 NewsNest. All Rights Reserved.</p>
     </footer>
 </body>
 </html>
