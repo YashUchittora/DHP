@@ -8,7 +8,6 @@ import psycopg2
 from authlib.integrations.flask_client import OAuth
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'
 
 nltk.download('punkt')
 nltk.download('averaged_perceptron_tagger')
@@ -177,9 +176,9 @@ def github_authorize():
             conn.close()
             return render_template("admin_dashboard.html", past_analyses=data)
         else:
-            return redirect(url_for('index'))
+            return redirect(url_for('home'))
     except:
-        return redirect(url_for('index'))
+        return redirect(url_for('home'))
 
     
 # Logout route for GitHub
@@ -189,7 +188,7 @@ def github_logout():
     # session.pop('github_token', None)()
     print("logout")
     # return redirect(url_for('index'))
-    return redirect(url_for('index'))
+    return redirect(url_for('home'))
 
 
 if __name__ == '__main__':
