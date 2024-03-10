@@ -11,23 +11,24 @@ from authlib.integrations.flask_client import OAuth
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
+app.config['SECRET_KEY'] = 'Yashu'
+app.config['GITHUB_CLIENT_ID'] = '24a604d52340cfca4f4b'
+app.config['GITHUB_CLIENT_SECRET'] = '85d616c66308bcdb89c830dcb7d4bc99ddeb3c2f'
 
 oauth = OAuth(app)
-app.config['SECRET_KEY'] = "Yashu"
-app.config['GITHUB_CLIENT_ID'] = "24a604d52340cfca4f4b"
-app.config['GITHUB_CLIENT_SECRET'] = "85d616c66308bcdb89c830dcb7d4bc99ddeb3c2f"
 
 github = oauth.register(
     name='github',
-    client_id=app.config["GITHUB_CLIENT_ID"],
-    client_secret=app.config["GITHUB_CLIENT_SECRET"],
-    access_token_url='https://github.com/login/oauth/access_token',
-    access_token_params=None,
+    client_id=app.config['GITHUB_CLIENT_ID'],
+    client_secret=app.config['GITHUB_CLIENT_SECRET'],
     authorize_url='https://github.com/login/oauth/authorize',
     authorize_params=None,
-    api_base_url='https://api.github.com/',
+    access_token_url='https://github.com/login/oauth/access_token',
+    access_token_params=None,
+    redirect_uri='https://your-app-domain.com/authorize',  # Replace with your actual redirect URI
     client_kwargs={'scope': 'user:email'},
 )
+
 
 # Connect to PostgreSQL
 conn = psycopg2.connect(
