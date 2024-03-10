@@ -9,8 +9,7 @@ import psycopg2
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
-nltk.download('punkt')
-nltk.download('averaged_perceptron_tagger')
+nltk.download('all')
 
 # Connect to PostgreSQL
 conn = psycopg2.connect(
