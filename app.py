@@ -11,24 +11,25 @@ from authlib.integrations.flask_client import OAuth
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
-app.config['SECRET_KEY'] = 'Yashu'
-app.config['GITHUB_CLIENT_ID'] = '24a604d52340cfca4f4b'
-app.config['GITHUB_CLIENT_SECRET'] = '85d616c66308bcdb89c830dcb7d4bc99ddeb3c2f'
-
-oauth = OAuth(app)
+# github
+app.config['SECRET_KEY'] = "THIS SHOULD BE SECRET"
+app.config['GITHUB_CLIENT_ID'] = "24a604d52340cfca4f4b"
+app.config['GITHUB_CLIENT_SECRET'] = "85d616c66308bcdb89c830dcb7d4bc99ddeb3c2f"
 
 github = oauth.register(
     name='github',
-    client_id=app.config['GITHUB_CLIENT_ID'],
-    client_secret=app.config['GITHUB_CLIENT_SECRET'],
-    authorize_url='https://github.com/login/oauth/authorize',
-    authorize_params=None,
+    client_id=app.config["GITHUB_CLIENT_ID"],
+    client_secret=app.config["GITHUB_CLIENT_SECRET"],
     access_token_url='https://github.com/login/oauth/access_token',
     access_token_params=None,
-    redirect_uri='https://your-app-domain.com/authorize',  # Replace with your actual redirect URI
+    authorize_url='https://github.com/login/oauth/authorize',
+    authorize_params=None,
+    api_base_url='https://api.github.com/',
     client_kwargs={'scope': 'user:email'},
 )
 
+# GitHub admin usernames for verification
+github_admin_usernames = ["YashUchittora", "atmabodha"]
 
 # Connect to PostgreSQL
 conn = psycopg2.connect(
@@ -149,15 +150,14 @@ def analyze_text(text):
     
     return num_sentences, num_words, pos_counts
 
-
-usernames = ["atmabodha","YashUchittora"]
 @app.route('/login/github')
 def github_login():
     github = oauth.create_client('github')
     redirect_uri = url_for('github_authorize', _external=True)
     return github.authorize_redirect(redirect_uri)
 
-@app.route('/authorize')
+# Github authorize route
+@app.route('/login/github/authorize')
 def github_authorize():
     try:
         github = oauth.create_client('github')
@@ -165,24 +165,29 @@ def github_authorize():
         session['github_token'] = token
         resp = github.get('user').json()
         print(f"\n{resp}\n")
-        username = resp.get('login')
-        if username in usernames:
+        logged_in_username = resp.get('login')
+        if logged_in_username in github_admin_usernames:
             cur = conn.cursor()
             cur.execute("SELECT * FROM news_analysis")
             data = cur.fetchall()
-            conn.commit()
+            conn.commit()  # Commit changes before closing the connection
             conn.close()
+
             return render_template("admin_dashboard.html", data=data)
         else:
-            return redirect(url_for('home'))
+            return redirect(url_for('index'))
     except:
-        return redirect(url_for('home'))
+        return redirect(url_for('index'))
 
+    
+# Logout route for GitHub
 @app.route('/logout/github')
 def github_logout():
     session.clear()
+    # session.pop('github_token', None)()
     print("logout")
-    return redirect(url_for('home'))
+    # return redirect(url_for('index'))
+    return redirect(url_for('index'))
 
 
 if __name__ == '__main__':
