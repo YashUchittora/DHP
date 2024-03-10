@@ -11,7 +11,7 @@ MarkupSafe==2.1.0
 click==8.0.3
 itsdangerous==2.0.1
 six==1.16.0
-authlib==0.15.3
 newspaper3k==0.2.8
+authlib==0.15.3
 
 gunicorn
