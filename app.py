@@ -2,7 +2,6 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from newspaper import Article
 import nltk
 from nltk import sent_tokenize, word_tokenize, pos_tag
-nltk.download('all')
 from collections import Counter
 import json
 import psycopg2
@@ -10,6 +9,9 @@ from authlib.integrations.flask_client import OAuth
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
+
+nltk.download('punkt')
+nltk.download('averaged_perceptron_tagger')
 
 # github
 app.config['SECRET_KEY'] = "THIS SHOULD BE SECRET"
